@@ -1,3 +1,5 @@
+    import torch
+    import torch.nn as nn
     
     class rotary(nn.Module):
         def __init__(self, base, n_state, n_head, rotation_type='mixed_tape', theta_learnable=False):
@@ -16,6 +18,7 @@
             self.register_buffer('inv_freq', freq_data)
     
             self.rotation_function = self.apply_blended_rotation
+            self.rotation_matrices = None  # Initialize rotation_matrices
     
         def quaternion_rotation(self, x, theta, u, v):
             u = u / torch.norm(u)
@@ -23,8 +26,18 @@
             cos_theta = torch.cos(theta / 2)
             sin_theta = torch.sin(theta / 2)
     
-            q = torch.tensor([cos_theta, sin_theta * u[0], sin_theta * u[1], sin_theta * u[2]], device=x.device)
-            q_conjugate = torch.tensor([cos_theta, -sin_theta * u[0], -sin_theta * u[1], -sin_theta * u[2]], device=x.device)
+            # Use existing tensor instead of creating new ones
+            q = torch.empty(4, device=x.device)
+            q[0] = cos_theta
+            q[1] = sin_theta * u[0]
+            q[2] = sin_theta * u[1]
+            q[3] = sin_theta * u[2]
+    
+            q_conjugate = torch.empty(4, device=x.device)
+            q_conjugate[0] = cos_theta
+            q_conjugate[1] = -sin_theta * u[0]
+            q_conjugate[2] = -sin_theta * u[1]
+            q_conjugate[3] = -sin_theta * u[2]
     
             x_shape = x.shape
             x = x.view(-1, 3)
@@ -51,12 +64,21 @@
                 return (G + Q) / 2
             return G
     
-        def apply_blended_rotation(self, x):
-            adjusted_rot = self.rot
-            for k in range(adjusted_rot):
+        def _precompute_rotation_matrices(self):
+            # Precompute rotation matrices
+            self.rotation_matrices = []
+            for _ in range(self.rot):
                 i, j = torch.randint(0, self.h_dim, (2,)).long()
                 theta = self.theta
                 B = self.blended_rotation_matrix(dims=self.h_dim, i=i, j=j, theta=theta)
+                self.rotation_matrices.append(B)
+    
+        def apply_blended_rotation(self, x):
+            # Apply precomputed rotation matrices
+            if self.rotation_matrices is None:
+                self._precompute_rotation_matrices()
+    
+            for B in self.rotation_matrices:
                 x = torch.matmul(x, B)
             return x
     
