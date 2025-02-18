@@ -1,3 +1,4 @@
+### 3 matrix blend embedding.
 #### Unlike metas rotary this ties into your decoder block so it takes fewer resources and almost no effort to install
 #### Usage : 
 
