@@ -10,7 +10,7 @@ This in the forward:
 
 x = self.rotary(x)
 
-    
+    Example
     class TextDecoder(nn.Module):
         def __init__(
             self, vocab: int, ctx: int, dims: int, heads: int, layer: int):
