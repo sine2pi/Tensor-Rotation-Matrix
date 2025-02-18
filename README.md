@@ -2,10 +2,12 @@
 #### Unlike metas rotary this ties into your decoder block so it takes fewer resources and almost no effort to install
 #### Usage : 
 
-put this inside your textdecoder blovk before the forward pass:
+put this inside your textdecoder block before the forward pass:
+
 self.rotary = rotary(dims=dims, heads=heads)
 
 This in the forward:
+
 x = self.rotary(x)
 
     
