@@ -1,8 +1,7 @@
 ```python
 class rotary(nn.Module):
     def __init__(self, ctx, dims, heads, base=10000, theta_learnable=False,
-        rot_learnable=False, matrix_learnable=False, freq_learnable=False,
-    ):
+        rot_learnable=False, matrix_learnable=False, freq_learnable=False):
         super().__init__()
         self.ctx = ctx
         self.dims = dims
@@ -20,12 +19,8 @@ class rotary(nn.Module):
             torch.eye(self.head_dim), requires_grad=matrix_learnable
         )
 
-        freq_data = 1.0 / (
-            self.base ** (torch.arange(0, self.head_dim, 2).float() / self.head_dim)
-        )
-
+        freq_data = 1.0 / (self.base ** (torch.arange(0, self.head_dim, 2).float() / self.head_dim))
         self.inv_freq = nn.Parameter(freq_data, requires_grad=freq_learnable)
-
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -62,9 +57,7 @@ class rotary(nn.Module):
         if dims == 3:
             u = torch.eye(dims, device=theta.device)[i]
             v = torch.eye(dims, device=theta.device)[j]
-            Q = self.q_rotation(
-                torch.eye(dims, device=theta.device), theta=theta, u=u, v=v
-            )
+            Q = self.q_rotation(torch.eye(dims, device=theta.device), theta=theta, u=u, v=v)
             G = (G + Q) / 2
         return G
 
