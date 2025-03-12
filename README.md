@@ -266,7 +266,7 @@ class rotary(nn.Module):
             heads, head_dim = rest
             if heads != self.heads or head_dim != self.head_dim:
                 raise ValueError(
-                    f"This many heads {self.heads} and head_dims {self.head_dim} we need, got this many heads {heads} and head_dims {head_dim} we did."
+                    f"This many heads {self.heads} and head_dims {self.head_dim} we need, this many heads {heads} and head_dims {head_dim} we have."
                 )
         else:
             raise ValueError(f"Expected the thingy to be 3D or 4D, but got {x.dim()}D")
