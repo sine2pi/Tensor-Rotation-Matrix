@@ -78,13 +78,6 @@ The `rotation_matrix` method within the `rotary` class is interesting and unique
 - **Custom Rotation Matrix**:
   - The ability to customize the rotation matrix for different dimensions and angles provides fine-grained control over the transformations applied to the input data.
 
-The `q_rotation` method in the `rotary` class provides quaternion-based rotation of a tensor, which is then used in conjunction with the rotation matrix to perform positional encoding transformations. Here’s how they interact:
-
-### Quaternion Rotation (`q_rotation` Method)
-The `q_rotation` method is used to apply quaternion-based rotations to the input tensor. Quaternions are a mathematical representation that provides efficient computation for 3D rotations.
-
-### Rotation Matrix (`rotation_matrix` Method)
-The `rotation_matrix` method constructs a rotation matrix for the specified dimensions, which is used to apply the rotation to the tensor.
 
 ### Interaction Between `q_rotation` and `rotation_matrix`
 
